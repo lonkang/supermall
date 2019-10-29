@@ -1,11 +1,11 @@
 <template>
-  <div class="goods-item">
+  <div class="goods-item" @click="itemClick">
     <!-- 商品组件子组件 每一个页面 -->
-    <img :src="goodsItem.show.img" alt="" @load="imageLoad">
+    <img :src="showImage" alt="" @load="imageLoad">
     <div class="goods-info">
-      <p>{{ goodsItem.title }}</p>
-      <span class="price">{{ goodsItem.price }}</span>
-      <span class="collect">{{ goodsItem.cfav }}</span>
+      <p>{{ goods.title }}</p>
+      <span class="price">{{ goods.price }}</span>
+      <span class="collect">{{ goods.cfav }}</span>
     </div>
   </div>
 </template>
@@ -14,7 +14,7 @@
   export default {
     name: 'GoodsListItem',
     props: {
-      goodsItem: {
+      goods: {
         type: Object,
         default() {
           return []
@@ -24,6 +24,15 @@
     methods: {
       imageLoad() {
         this.$bus.$emit('itemImageLoad')
+      },
+      itemClick() {
+        // 编程式导航
+        this.$router.push('/detail/'+ this.goods.iid)
+      }
+    },
+    computed: {
+      showImage() {
+        return this.goods.image || this.goods.show.img
       }
     }
   }
