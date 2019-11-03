@@ -24,19 +24,17 @@
         scroll: null,
       }
     },
-    data() {
-      return {
-        scroll: null
-      }
-    },
     mounted() {
       // 1 创建BScroll对象 
       this.scroll = new BScroll(this.$refs.wrapper, {
+        // 设置点击有用
         click: true,
+        // 传输过来的值 0， 1， 2， 3  2/3就是可以监听到滚动
         probeType: this.probeType,
+        // 监听滚动到底部
         pullUpLoad: this.pullUpLoad
       })
-      
+      // 当传过来的值为2 3 的时候监听滚动
       if (this.probeType === 2 || this.probeType === 3) {
         this.scroll.on('scroll', (position) => {
           // console.log(position);
@@ -60,6 +58,7 @@
       },
       refresh() {
         // refresh 重新计算 better-scroll 
+        // console.log('...')
         this.scroll && this.scroll.refresh()
       },
       finishPullUp() {

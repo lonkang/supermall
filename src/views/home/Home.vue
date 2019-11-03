@@ -24,19 +24,24 @@
 </template>
 
 <script>
+  // 轮播图
   import HomeSwiper from './childComps/HomeSwiper'
   import RecommendView from './childComps/RecommendView'
   import FeatureView from './childComps/FeatureView'
 
+  // 顶部导航
   import NavBar from 'components/common/navbar/NavBar'
+  // 分页
   import TabControl from 'components/content/tabControl/TabControl'
+  //  详情页
   import GoodList from 'components/content/goods/GoodsList'
+  // 使用 better-scroll代替原生的滚动
   import Scroll from 'components/common/scroll/Scroll'
-  import BackTop from 'components/content/backtop/BackTop'
-
+  // ajax相关
   import { getHomeMultidata, getHomeGoods } from "network/home"
   // import {debounce} from "@/common/untils";
-  import {itemListenerMixin} from '@/common/mixin'
+  // mixin 混入
+  import {itemListenerMixin, BackTopMixin} from '@/common/mixin'
 
   export default {
     name: "Home",
@@ -48,7 +53,6 @@
       TabControl,
       GoodList,
       Scroll,
-      BackTop
     },
     data() {
       return {
@@ -59,14 +63,14 @@
           'new': {page: 0, list: []},
           'sell': {page: 0, list: []},
         },
+        // 默认显示 pop
         currentType: 'pop',
-        isShowBackTop: false,
         tabOffsetTop: 0,
         isTabFixed: false,
         saveY: 0
       }
     },
-    mixins: [itemListenerMixin],
+    mixins: [itemListenerMixin, BackTopMixin],
     computed: {
       showGoods() {
         return this.goods[this.currentType].list
@@ -114,14 +118,14 @@
         this.$refs.tabControl1.currentIndex = index;
         this.$refs.tabControl2.currentIndex = index;
       },
-      backClick() {
-        this.$refs.scroll.scrollTo(0, 0)
-      },
       contentScroll(position) {
         // 1.判断BackTop是否显示
-        this.isShowBackTop = (-position.y) > 1000
+        // this.isShowBackTop = (-position.y) > 1000
+        this.listenShowBackTop(position)
 
         // 2.决定tabControl是否吸顶(position: fixed)
+        // 组件对象 .$el:组件对象的根元素
+        // console.log(this.$refs.tabControl1.$el.offsetTop)
         this.isTabFixed = (-position.y) > this.tabOffsetTop
       },
       loadMore() {
@@ -145,7 +149,7 @@
           this.goods[type].list.push(...res.data.list)
           this.goods[type].page += 1
 
-          // 完成上拉加载更多
+          // 完成上拉加载更多再调用一下这个就能再次 进行刷新了
           this.$refs.scroll.finishPullUp()
         })
       }
